@@ -136,7 +136,7 @@ func main() {
 					Name: username,
 				},
 			})
-			// r.Push(&git.PushOptions{})
+			r.Push(&git.PushOptions{})
 
 			return nil
 		},
