@@ -1,12 +1,14 @@
 package main
 
 import (
-	"os"
-	"log"
 	"errors"
-	"github.com/urfave/cli/v2"
+	"log"
+	"os"
+
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/tcnksm/go-gitconfig"
+	"github.com/urfave/cli/v2"
 )
 
 const version = "0.0.1"
@@ -27,15 +29,15 @@ func printCommitType() string {
 
 func main() {
 	commitType := map[string]string{
-		"1": "build",
-		"2": "chore",
-		"3": "ci",
-		"4": "docs",
-		"5": "feat",
-		"6": "fix",
-		"7": "perf",
-		"8": "refactor",
-		"9": "revert",
+		"1":  "build",
+		"2":  "chore",
+		"3":  "ci",
+		"4":  "docs",
+		"5":  "feat",
+		"6":  "fix",
+		"7":  "perf",
+		"8":  "refactor",
+		"9":  "revert",
 		"10": "style",
 		"11": "test",
 	}
@@ -87,7 +89,7 @@ func main() {
 		},
 		Action: func(ctx *cli.Context) error {
 			commitMessage := ""
-			
+
 			if _, ok := commitType[ctx.String("type")]; ok {
 				commitMessage += commitType[ctx.String("type")]
 			} else {
@@ -97,11 +99,11 @@ func main() {
 			if _, ok := commitType[ctx.String("scope")]; ok {
 				commitMessage += "(" + ctx.String("scope") + ")"
 			}
-			
+
 			if _, ok := commitType[ctx.String("exclamation-mark")]; ok {
 				commitMessage = "!"
 			}
-			
+
 			if len(ctx.String("message")) > 0 {
 				commitMessage += ": " + ctx.String("message")
 			} else {
@@ -123,12 +125,18 @@ func main() {
 				log.Println(err)
 			}
 
+			username, err := gitconfig.Username()
+			if err != nil {
+				username = ""
+			}
+			
 			w.Commit(commitMessage, &git.CommitOptions{
+				All: ctx.Bool("all"),
 				Author: &object.Signature{
-					Name:  "",
+					Name: username,
 				},
 			})
-			r.Push(&git.PushOptions{})
+			// r.Push(&git.PushOptions{})
 
 			return nil
 		},
