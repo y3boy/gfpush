@@ -6,12 +6,18 @@ linter:
 
 .PHONY: build
 build:
-	@echo "Building gfpush ..."
+	@ echo "Building gfpush ..."
 	@ go build -o gfpush cli/gfpush/main.go
-	@echo done ✔️
+	@ echo Done ✔️
+
 .PHONY: check
 check:
-	@echo
-	@echo "Checking gfpush version ..."
-	./gfpush -v
-	@echo done ✔️
+	@ echo
+	@ echo "Lets check gfpush version ..."
+	@ ./gfpush -v
+	@ echo Looks everything works fine 🤩
+	@ echo
+	@ echo Move gfpush binary file to one of PATH directory.
+	@ echo For example /usr/local/bin/.
+	@ echo Have fun 🚀
+	
