@@ -2,11 +2,11 @@ package main
 
 import (
 	"os"
-	"fmt"
 	"log"
 	"errors"
 	"github.com/urfave/cli/v2"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
 const version = "0.0.1"
@@ -95,15 +95,15 @@ func main() {
 			}
 
 			if _, ok := commitType[ctx.String("scope")]; ok {
-				commitMessage += "(" + commitType[ctx.String("scope")] + ")"
+				commitMessage += "(" + ctx.String("scope") + ")"
 			}
 			
 			if _, ok := commitType[ctx.String("exclamation-mark")]; ok {
-				commitMessage += "!"
+				commitMessage = "!"
 			}
 			
 			if len(ctx.String("message")) > 0 {
-				commitMessage += commitType[ctx.String("message")]
+				commitMessage += ": " + ctx.String("message")
 			} else {
 				return errors.New("gfpush: commit message not found")
 			}
@@ -122,11 +122,13 @@ func main() {
 			if err != nil {
 				log.Println(err)
 			}
-			
-			status, _ := w.Status()
-			fmt.Println(status)
-			// w.Commit(commitMessage, &git.CommitOptions{})
-			// r.Push(&git.PushOptions{})
+
+			w.Commit(commitMessage, &git.CommitOptions{
+				Author: &object.Signature{
+					Name:  "",
+				},
+			})
+			r.Push(&git.PushOptions{})
 
 			return nil
 		},
