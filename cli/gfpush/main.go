@@ -2,43 +2,45 @@ package main
 
 import (
 	"os"
-	// "fmt"
-	// "strconv"
+	"fmt"
+	"log"
+	"errors"
 	"github.com/urfave/cli/v2"
-	// "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5"
 )
 
 const version = "0.0.1"
 
 func printCommitType() string {
-	return `1: build
-	2: chore
-	3: ci
-	4: docs
-	5: feat
-	6: fix
-	7: perf
-	8: refactor
-	9: revert
-	10: style
-	11: test`
+	return `1: build - changes that affect the build system or external dependencies
+	2: chore - changes that do not relate to a fix or feature and don't modify src or test files 
+	3: ci - continuous integration related
+	4: docs - updates to documentation 
+	5: feat - a new feature is introduced with the changes
+	6: fix - a bug fix has occurred
+	7: perf - performance improvements
+	8: refactor - refactored code that neither fixes a bug nor adds a feature
+	9: revert - reverts a previous commit
+	10: style - changes that do not affect the meaning of the code (white-space, missing semi-colons, and so on)
+	11: test - including new or correcting previous tests`
 }
 
 func main() {
-	// commitType := map[int]string{
-	// 	1: "fix", 
-	// 	2: "feat",
-	// 	3: "build",
-	// 	4: "chore",
-	// 	5: "ci",
-	// 	6: "docs",
-	// 	7: "style",
-	// 	8: "refactor",
-	// 	9: "perf",
-	// 	10: "test",
-	// }
-	
-	// setup version flag 
+	commitType := map[string]string{
+		"1": "build",
+		"2": "chore",
+		"3": "ci",
+		"4": "docs",
+		"5": "feat",
+		"6": "fix",
+		"7": "perf",
+		"8": "refactor",
+		"9": "revert",
+		"10": "style",
+		"11": "test",
+	}
+
+	// setup version flag
 	cli.VersionFlag = &cli.BoolFlag{
 		Name:    "print-version",
 		Aliases: []string{"v"},
@@ -46,21 +48,26 @@ func main() {
 	}
 
 	app := &cli.App{
-		Name:  "gfpush",
-		Usage: "commit and push faster",
+		Name:                 "gfpush",
+		Usage:                "commit and push faster",
 		EnableBashCompletion: true,
+		Version:              version,
 		Authors: []*cli.Author{
 			&cli.Author{
 				Name:  "Anushervon Nabiev",
 				Email: "nabievanush1@gmail.com",
 			},
 		},
-		Version: version,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:     "all",
-				Aliases:	[]string{"a"},
-				Usage:       "Tell the command to automatically stage files that have been modified and deleted,\n\tbut new files you have not told Git about are not affected.",
+				Name:    "all",
+				Aliases: []string{"a"},
+				Usage:   "Tell the command to automatically stage files that have been modified and deleted,\n\tbut new files you have not told Git about are not affected.",
+			},
+			&cli.BoolFlag{
+				Name:    "exclamation-mark",
+				Aliases: []string{"e"},
+				Usage:   "Add '!' to convention.",
 			},
 			&cli.StringFlag{
 				Name:    "message",
@@ -68,16 +75,64 @@ func main() {
 				Usage:   "Use the given `<msg>` as the commit message.",
 			},
 			&cli.StringFlag{
-				Name:    "type",
-				Aliases: []string{"t"},
-				Usage:   ("Type of commit message.\n\t" + printCommitType()),
-			},
-			&cli.StringFlag{
 				Name:    "scope",
 				Aliases: []string{"s"},
 				Usage:   ("Scope of commit."),
 			},
+			&cli.StringFlag{
+				Name:    "type",
+				Aliases: []string{"t"},
+				Usage:   ("Type of commit message.\n\t" + printCommitType()),
+			},
+		},
+		Action: func(ctx *cli.Context) error {
+			commitMessage := ""
+			
+			if _, ok := commitType[ctx.String("type")]; ok {
+				commitMessage += commitType[ctx.String("type")]
+			} else {
+				return errors.New("gfpush: type of commit message not found")
+			}
+
+			if _, ok := commitType[ctx.String("scope")]; ok {
+				commitMessage += "(" + commitType[ctx.String("scope")] + ")"
+			}
+			
+			if _, ok := commitType[ctx.String("exclamation-mark")]; ok {
+				commitMessage += "!"
+			}
+			
+			if len(ctx.String("message")) > 0 {
+				commitMessage += commitType[ctx.String("message")]
+			} else {
+				return errors.New("gfpush: commit message not found")
+			}
+
+			curr_path, err := os.Getwd()
+			if err != nil {
+				log.Println(err)
+			}
+
+			r, err := git.PlainOpen(curr_path)
+			if err != nil {
+				log.Println(err)
+			}
+
+			w, err := r.Worktree()
+			if err != nil {
+				log.Println(err)
+			}
+			
+			status, _ := w.Status()
+			fmt.Println(status)
+			// w.Commit(commitMessage, &git.CommitOptions{})
+			// r.Push(&git.PushOptions{})
+
+			return nil
 		},
 	}
-	app.Run(os.Args)
+
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
+	}
 }
