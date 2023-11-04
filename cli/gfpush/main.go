@@ -1,12 +1,12 @@
 package main
 
-const version = "0.0.1"
-
 import (
 	"os"
-
+	"fmt"
 	"github.com/urfave/cli/v2"
 )
+
+const version = "0.0.1"
 
 func main() {
 	// commitType := map[int]string{
@@ -30,13 +30,13 @@ func main() {
 			{
 				Name:    "version",
 				Aliases: []string{"v"},
-				Usage:   "getversion",
+				Usage:   "print gfpush version",
 				Action: func(cCtx *cli.Context) error {
-					fmt.Println("added task: ", cCtx.Args().First())
+					fmt.Println(version)
 					return nil
 				},
 			},
+		},
 	}
-
 	app.Run(os.Args)
 }
