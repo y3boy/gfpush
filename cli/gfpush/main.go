@@ -1,9 +1,10 @@
 package main
 
 import (
-	"errors"
-	"log"
 	"os"
+	"log"
+	"time"
+	"errors"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -134,6 +135,7 @@ func main() {
 				All: ctx.Bool("all"),
 				Author: &object.Signature{
 					Name: username,
+					When:  time.Now(),
 				},
 			})
 			r.Push(&git.PushOptions{})
