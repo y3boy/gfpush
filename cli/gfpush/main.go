@@ -111,12 +111,12 @@ func main() {
 				return errors.New("gfpush: commit message not found")
 			}
 
-			curr_path, err := os.Getwd()
+			currentPath, err := os.Getwd()
 			if err != nil {
 				log.Println(err)
 			}
 
-			r, err := git.PlainOpen(curr_path)
+			r, err := git.PlainOpen(currentPath)
 			if err != nil {
 				log.Println(err)
 			}
