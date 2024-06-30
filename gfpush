@@ -4,11 +4,7 @@ usage() {
    echo "Try 'gfpush -h' for more information"
 }
 
-parse_git_branch() {
-   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
-}
-
-VERSION="1.0.0"
+VERSION="1.1.0"
 
 HELP="
 NAME:
@@ -25,8 +21,8 @@ AUTHOR:
 
 GLOBAL OPTIONS:
    -a                  Tell the command to automatically stage files that have been modified and deleted,
-                       but new files you have not told Git about are not affected. (default: false)
-   -e                  Add (!) to convention. (default: false)
+                       but new files you have not told Git about are not affected.
+   -e                  Add (!) to convention.
    -m <msg>            Use the given <msg> as the commit message.
    -s value            Scope of commit.
    -t value            Type of commit message:
@@ -42,7 +38,7 @@ GLOBAL OPTIONS:
                         10: style - changes that do not affect the meaning of the code (white-space, missing semi-colons, and so on)
                         11: test - including new or correcting previous tests
    -h                  Show help
-   -v                  Print gfpush version (default: false)
+   -v                  Print gfpush version.
    
 EXAMPLE:
     gfpush -t 5 -m 'Add OAuth2 via Keycloak' --> feat: Add OAuth2 via Keycloak
@@ -50,63 +46,17 @@ EXAMPLE:
     gfpush -e -t 5 -s api -m 'Add metrics'   --> feat(api)!: Add metrics
 "
 
-# while getopts "hvaem:s:t:" opt; do
-#   case "$opt" in
-#       a) 
-#          all="-a"
-#       ;;
-#       e)
-#          exclamation_mark="!"
-#       ;;
-#       h)
-#          echo "$help"
-#          exit 0
-#       ;;
-#       m)
-#          message="$OPTARG"
-#       ;;
-#       s) 
-#          scope="$OPTARG"
-#       ;;
-#       t) 
-#          COMMIT_TYPE="$OPTARG"
-#          echo "$COMMIT_TYPE"
-#          if [[ "$COMMIT_TYPE" -le "0" ]]  || [[ "$COMMIT_TYPE" -ge "12" ]] || [[ ! -n "$COMMIT_TYPE" ]]; then
-#             echo "1: build  3: ci    5: feat  7: perf      9: revert  11: test 
-#          2: chore  4: docs  6: fix   8: refactor  10: style"
-#             exit 1
-#          fi
-#       ;;
-#       v) echo "gfpush version $version"
-#          exit 0
-#       ;;
-   	# :)
-		# 	echo "Option -$OPTARG requires an argument (getopts)" >&2
-		# 	exit 1
-		# ;;
-      # \?)
-		# 	echo "Invalid option: -$OPTARG" >&2
-		# 	exit 1
-      # ;;
-#   esac
-# done
-
-# if [[ "$COMMIT_TYPE" -le 0 ]]  || [[ "$COMMIT_TYPE" -ge 12 ]] || [[ ! -n "$COMMIT_TYPE" ]]; then
-#   echo "1: build  3: ci    5: feat  7: perf      9: revert  11: test 
-# 2: chore  4: docs  6: fix   8: refactor  10: style";
-#   exit 1;
-# fi
-
-# if [[ ! -n "$message" ]]; then
-#   exit 1;
-# fi
-
-BRANCH=$(parse_git_branch)
-
 declare TYPE=( [1]="build" [2]="chore" [3]="ci" [4]="docs" 
                [5]="feat" [6]="fix" [7]="perf" [8]="refactor"
                [9]="revert" [10]="style" [11]="test" )
 
+
+if [[ ! -d .git ]]; then
+   echo "$PWD is not git repository. Could not find .git directory."
+   exit 1
+fi
+
+BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 
 while getopts "ahm:st:v" options; do
    case "$options" in
@@ -124,19 +74,12 @@ while getopts "ahm:st:v" options; do
    ;;
    m)
       MESSAGE="$OPTARG"
-      if [[ ! -n "$MESSAGE" ]]; then
-         echo "Make sure commit message is not empty"
-      fi
    ;;
    s) 
       SCOPE="$OPTARG"
    ;;
    t)
       COMMIT_TYPE="$OPTARG"
-      if [[ "$COMMIT_TYPE" -le "0" ]]  || [[ "$COMMIT_TYPE" -ge "12" ]] || [[ ! -n "$COMMIT_TYPE" ]]; then
-         echo -e "1: build   2: chore     3: ci\n4: docs    5: feat      6: fix\n7: perf    8: refactor  9: revert\n10: style  11: test"
-         exit 1
-      fi
    ;;
    v)
       echo "gfpush version $VERSION"
@@ -149,7 +92,15 @@ while getopts "ahm:st:v" options; do
    esac
 done
 
-if [ -z "$MESSAGE" ] || [ -z "$COMMIT_TYPE" ]; then
+if [[ "$COMMIT_TYPE" -le "0" ]]  || [[ "$COMMIT_TYPE" -ge "12" ]] || [[ ! -n "$COMMIT_TYPE" ]]; then
+   echo "Make sure to provide correct commit message type."
+   echo -e "1: build   2: chore     3: ci\n4: docs    5: feat      6: fix\n7: perf    8: refactor  9: revert\n10: style  11: test"
+   usage
+   exit 1
+fi
+
+if [ -z "$MESSAGE" ]; then
+   echo "Make sure commit message is not empty."
    usage
    exit 1
 fi
@@ -159,13 +110,15 @@ git status -s;
 echo;
 
 eval "git commit $FLAG_ALL -m '${TYPE[$COMMIT_TYPE]}$SCOPE$FLAG_E_MARK: $MESSAGE'";
-if [[ "$?" -gt 0 ]]; then
+
+if [ "$?" -gt 0 ]; then
    exit 1
 fi
 
 echo;
 
 eval "git push -q origin $BRANCH";
+
 if [[ "$?" -gt 0 ]]; then
    exit 1
 fi
