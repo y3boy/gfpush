@@ -5,8 +5,8 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 ## Installation
-- Clone this repository.
-- Relocate `gfpush` to a directory listed in your $PATH. For instance: `mv gfpush /usr/local/bin/`.
+- Download last release.
+- Relocate `gfpush` to a directory listed in your $PATH. Example: `mv gfpush /usr/local/bin/`.
 
 ## Usage
 - Include the required file(s) in the staging area using `git add`, or use `gfpush -a`, which functions similarly to `git commit -a`.
