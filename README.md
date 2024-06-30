@@ -1,6 +1,6 @@
 # gfpush
 
-`gfpush` is an uncomplicated command-line interface (CLI) utility designed to expedite the process of executing `git commit && git push origin <branch_name>`. It additionally provides support for the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. liips 
+`gfpush` is an uncomplicated command-line interface (CLI) utility designed to expedite the process of executing `git commit && git push origin <branch_name>`. It additionally provides support for the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
@@ -11,10 +11,10 @@
 ## Usage
 - Include the required file(s) in the staging area using `git add`, or use `gfpush -a`, which functions similarly to `git commit -a`.
 - Specify the commit message type using the `-t` flag and provide the commit message using `-m`.
-- Include the scope of the commit message by specifying it with the `-s` flag. (Optional)
-- To denote a *BREAKING CHANGE*, utilize the `-e` flag, which appends an exclamation mark (!) to the commit message. (Optional)
+- Include the scope of the commit message by specifying it with the `-s` flag. (Optional).
+- To denote a *BREAKING CHANGE*, utilize the `-e` flag, which appends an exclamation mark (!) to the commit message. (Optional).
 
-## Examples 
+## Examples
 
 |Command                                          |Commit message               |
 |:------------------------------------------------|:----------------------------|
