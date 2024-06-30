@@ -51,13 +51,6 @@ declare TYPE=( [1]="build" [2]="chore" [3]="ci" [4]="docs"
                [9]="revert" [10]="style" [11]="test" )
 
 
-if [[ ! -d .git ]]; then
-   echo "$PWD is not git repository. Could not find .git directory."
-   exit 1
-fi
-
-BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
-
 while getopts "ahm:st:v" options; do
    case "$options" in
    a)
@@ -91,6 +84,13 @@ while getopts "ahm:st:v" options; do
    ;;
    esac
 done
+
+if [[ ! -d .git ]]; then
+   echo "$PWD is not git repository. Could not find .git directory."
+   exit 1
+fi
+
+BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 
 if [[ "$COMMIT_TYPE" -le "0" ]]  || [[ "$COMMIT_TYPE" -ge "12" ]] || [[ ! -n "$COMMIT_TYPE" ]]; then
    echo "Make sure to provide correct commit message type."
