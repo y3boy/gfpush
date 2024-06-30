@@ -14,7 +14,7 @@ USAGE:
    gfpush [global options...]
 
 VERSION:
-   $version
+   $VERSION
 
 AUTHOR:
    Anushervon Nabiev <nabievanush1@gmail.com>
