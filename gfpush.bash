@@ -4,7 +4,7 @@ usage() {
    echo "Try 'gfpush -h' for more information"
 }
 
-VERSION="1.1.0"
+VERSION="1.2.0"
 
 HELP="
 NAME:
@@ -84,11 +84,6 @@ while getopts "ahm:st:v" options; do
    ;;
    esac
 done
-
-if [[ ! -d .git ]]; then
-   echo "$PWD is not git repository. Could not find .git directory."
-   exit 1
-fi
 
 BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 
