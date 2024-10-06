@@ -6,7 +6,8 @@
 
 ## Installation
 
-- Download latest release.
+- Clone repository.
+- Build binary with `make build`. Make sure `gcc` and `shc` is installed.
 - Relocate `gfpush` to a directory listed in your $PATH. Example: `mv gfpush /usr/local/bin/`.
 
 ## Usage
