@@ -1,4 +1,10 @@
-build:	gfpush.bash
-	shc -f gfpush.bash
-	mv gfpush.bash.x gfpush
-	rm -f gfpush.bash.x.c
+# Requirements for build:
+# gcc
+# shc
+.SILENT:
+build:	gfpush.sh
+	shc -f gfpush.sh
+	mv gfpush.sh.x gfpush
+	rm -f gfpush.sh.x.c
+	sha256sum gfpush > sha256sum.txt
+	echo "Build successfully!"
