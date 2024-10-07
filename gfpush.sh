@@ -98,8 +98,14 @@ fi
 
 if [[ -n "$FLAG_BRANCH" ]]; then
    BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/');
+   echo "Commiting file(s) status:";
+   eval "git status -s";
+   echo;
    eval  "git commit $FLAG_ALL -m '$BRANCH: $MESSAGE'";
 elif [[ "$COMMIT_TYPE" -le "0" ]]  || [[ "$COMMIT_TYPE" -ge "12" ]] || [[ -n "$COMMIT_TYPE" ]]; then
+   echo "Commiting file(s) status:";
+   eval "git status -s";
+   echo;
    eval  "git commit $FLAG_ALL -m '${TYPE[$COMMIT_TYPE]}$SCOPE$FLAG_E_MARK: $MESSAGE'";
 else
    echo "Make sure to provide correct commit message type or -b flag instead."
@@ -108,17 +114,12 @@ else
    exit 1
 fi
 
-echo "Commiting file(s) status:";
-eval "git status -s";
-echo;
-
 if [ "$?" -gt 0 ]; then
    exit 1
 fi
 
 echo;
-
-# eval "git push -q origin $BRANCH";
+eval "git push -q origin $BRANCH";
 
 if [[ "$?" -gt 0 ]]; then
    exit 1
