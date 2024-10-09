@@ -118,7 +118,7 @@ fi
 
 echo;
 
-# eval "git push -q origin $BRANCH";
+eval "git push -q origin $BRANCH";
 
 if [[ "$?" -gt 0 ]]; then
    exit 1
