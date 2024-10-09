@@ -95,7 +95,6 @@ if [ -z "$MESSAGE" ]; then
    usage
    exit 1
 fi
-echo $COMMIT_TYPE;
 
 if [[ -n "$FLAG_BRANCH" ]]; then
    BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/');
