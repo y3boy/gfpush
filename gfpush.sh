@@ -99,7 +99,7 @@ fi
 if [[ -n "$FLAG_BRANCH" ]]; then
    BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/');
    eval  "git commit $FLAG_ALL -m '$BRANCH: $MESSAGE'";
-elif [[ "$COMMIT_TYPE" -le "0" ]]  || [[ "$COMMIT_TYPE" -ge "12" ]] || [[ -n "$COMMIT_TYPE" ]]; then
+elif ([[ "$COMMIT_TYPE" -le "0" ]]  || [[ "$COMMIT_TYPE" -ge "12" ]]) && [[ -n "$COMMIT_TYPE" ]]; then
    eval  "git commit $FLAG_ALL -m '${TYPE[$COMMIT_TYPE]}$SCOPE$FLAG_E_MARK: $MESSAGE'";
 else
    echo "Make sure to provide correct commit message type or -b flag instead."
